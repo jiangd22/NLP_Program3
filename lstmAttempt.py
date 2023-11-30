@@ -1,6 +1,7 @@
 # https://machinelearningmastery.com/sequence-classification-lstm-recurrent-neural-networks-python-keras/
 # LSTM with Dropout for sequence classification in the IMDB dataset
 import tensorflow as tf
+from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import LSTM
@@ -15,11 +16,15 @@ tf.random.set_seed(7)
 # load the dataset but only keep the top n words, zero the rest
 top_words = 5000
 
-df = pd.read_csv("thorn.csv")
+df = pd.read_csv("data/thorn.txt", sep='.', header=0, usecols= ['Label','Text'])
 #dataFile = "thorn.csv"
 #dataset = load_dataset("csv", data_files=dataFile)
-
-(X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=top_words)
+print(df)
+df_text_genre = df[['Label', 'Text']]
+print(df_text_genre)
+#(X_train, y_train), (X_test, y_test) = df.load_data(num_words=top_words)
+X_train, X_test = train_test_split(df_text_genre, test_size=0.2, random_state=42, shuffle=True)
+#(X_train, y_train), (X_test, y_test) = df
 # truncate and pad input sequences
 max_review_length = 500
 X_train = sequence.pad_sequences(X_train, maxlen=max_review_length)
