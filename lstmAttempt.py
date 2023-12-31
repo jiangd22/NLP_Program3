@@ -11,28 +11,22 @@ from tensorflow.keras.preprocessing import sequence
 from datasets import load_dataset
 import pandas as pd
 
-# fix random seed for reproducibility
 tf.random.set_seed(7)
-# load the dataset but only keep the top n words, zero the rest
-top_words = 5000
+top_words = 500
+df = pd.read_csv("data/thorn.csv", sep=';')
+print(df.head())
+df.columns = df.columns.str.strip()
+print("Column names:", df.columns)
+X_train, X_test, y_train, y_test = train_test_split(df.get(["Text"]), df.get(["Label"]), test_size=0.2, random_state=42, shuffle=True)
 
-df = pd.read_csv("data/thorn.txt", sep='.', header=0, usecols= ['Label','Text'])
-#dataFile = "thorn.csv"
-#dataset = load_dataset("csv", data_files=dataFile)
-print(df)
-df_text_genre = df[['Label', 'Text']]
-print(df_text_genre)
-#(X_train, y_train), (X_test, y_test) = df.load_data(num_words=top_words)
-X_train, X_test = train_test_split(df_text_genre, test_size=0.2, random_state=42, shuffle=True)
-#(X_train, y_train), (X_test, y_test) = df
 # truncate and pad input sequences
-max_review_length = 500
-X_train = sequence.pad_sequences(X_train, maxlen=max_review_length)
-X_test = sequence.pad_sequences(X_test, maxlen=max_review_length)
+max_review_length = 200
+#X_train = sequence.pad_sequences(X_train, maxlen=max_review_length, dtype=object)
+#X_test = sequence.pad_sequences(X_test, maxlen=max_review_length, dtype=object)
 # create the model
-embedding_vecor_length = 32
+embedding_vector_length = 32
 model = Sequential()
-model.add(Embedding(top_words, embedding_vecor_length, input_length=max_review_length))
+model.add(Embedding(top_words, embedding_vector_length, input_length=max_review_length))
 model.add(Dropout(0.2))
 model.add(LSTM(100))
 model.add(Dropout(0.2))
